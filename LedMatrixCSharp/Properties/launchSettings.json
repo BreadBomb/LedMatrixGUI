@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LedMatrixCSharp": {
+      "commandName": "Project",
+      "commandLineArgs": "--norender"
+    }
+  }
+}

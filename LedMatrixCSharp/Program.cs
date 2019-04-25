@@ -25,29 +25,11 @@ namespace LedMatrixCSharp
                 matrixApplication = new MatrixApplication();
             }
 
-            Rectangle rectangle = new Rectangle(0, 0, 10, 15, new CanvasColor(255, 255, 255));
-            Label label = new Label();
+            Image image = new Image("Animations/7.bmp");
 
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Horizontal;
-            stackPanel.Children.Add(rectangle);
-            stackPanel.Children.Add(label);
-
-            matrixApplication.Child = stackPanel;
+            matrixApplication.Child = image;
 
             Random r = new Random();
-
-            while (true)
-            {
-                if (stackPanel.Orientation == Orientation.Vertical)
-                {
-                    stackPanel.Orientation = Orientation.Horizontal;
-                } else
-                {
-                    stackPanel.Orientation = Orientation.Vertical;
-                }
-                Console.ReadKey();
-            }
         }
     }
 }

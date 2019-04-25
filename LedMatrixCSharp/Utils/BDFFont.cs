@@ -24,6 +24,7 @@ namespace LedMatrixCSharp.Utils
         private Dictionary<int, Glyph> glyphs = new Dictionary<int, Glyph>();
 
         public bool LoadFont4x6() => this.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf"));
+        public bool LoadFont5x7() => this.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf"));
 
         public BDFFont() { }
 
@@ -103,8 +104,7 @@ namespace LedMatrixCSharp.Utils
 
         public bool LoadFont(string path)
         {
-            if (path == default(string)) return false;
-            FileStream fileStream = new FileStream(path, FileMode.Open);
+            var fileStream = new FileStream(path, FileMode.Open);
             return LoadFont(fileStream);
         }
 
@@ -127,16 +127,19 @@ namespace LedMatrixCSharp.Utils
             for(int y = 0; y < glyph.Height; y++)
             {
                 var bitmap = glyph.Bitmap[y];
-                var bits = Convert.ToString(bitmap, 2);
+                var bitString = Convert.ToString(bitmap, 2);
+                int[] bits = bitString.PadLeft(8, '0') // Add 0's from left
+                    .Select(c => int.Parse(c.ToString())) // convert each char to int
+                    .ToArray();
                 for(int x = 0; x < glyph.DeviceWidth; x++)
                 {
-                    if (bits != "0" && bits[x] == 1)
+                    if (bits[x] == 1)
                     {
-                        canvas.SetPixel(x, y, color);
+                        canvas.SetPixel(position.X + x, position.Y + y, color);
                     }
-                    if (bits == "0" || bits[x] == 0 && background != null)
+                    if (bits[x] == 0 && background != null)
                     {
-                        canvas.SetPixel(x, y, background);
+                        canvas.SetPixel(position.X + x, position.Y + y, background);
                     }
                 }
             } 

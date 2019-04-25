@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LedMatrixCSharp.View
 {
-    class View
+    public class View
     {
         public int X { get; set; }
         public int Y { get; set; }
@@ -23,7 +23,7 @@ namespace LedMatrixCSharp.View
             Renderer.Renderer.RenderCache.Add(Canvas);
         }
 
-        public void OnBeforeDraw()
+        public virtual void OnBeforeDraw()
         {
             Canvas.Clear();
         }

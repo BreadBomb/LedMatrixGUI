@@ -12,6 +12,18 @@ namespace LedMatrixCSharp.View.Views
         private string _text;
         private BDFFont _font = new BDFFont();
 
+        public new CanvasPosition Position
+        {
+            get
+            {
+                return base.Position;
+            }
+            set
+            {
+                base.Position = value;
+            }
+        }
+
         public string Text
         {
             get { return _text; }
@@ -20,8 +32,8 @@ namespace LedMatrixCSharp.View.Views
                 this._text = value;
                 if (Font != null)
                 {
-                    this.Width = Text.Length * Font.getCharacterWidth(0);
-                    this.Height = _font.Height;
+                    this.Dimensions.Width = Text.Length * Font.getCharacterWidth(0);
+                    this.Dimensions.Height = _font.Height;
                 }
             }
         }
@@ -32,8 +44,8 @@ namespace LedMatrixCSharp.View.Views
             set
             {
                 _font = value;
-                this.Width = Text.Length * Font.getCharacterWidth(0);
-                this.Height = _font.Height;
+                this.Dimensions.Width = Text.Length * Font.getCharacterWidth(0);
+                this.Dimensions.Height = _font.Height;
             }
         }
         
@@ -48,7 +60,7 @@ namespace LedMatrixCSharp.View.Views
         {
             for (var i = 0; i < Text.Length; i++)
             {
-                Font.DrawGlyph(ref Canvas, new CanvasPosition(X + Font.getCharacterWidth(0)*i, Y + Font.Height), CanvasColor.RED, Text[i]);
+                Font.DrawGlyph(ref Canvas, new CanvasPosition(Position.X + Font.getCharacterWidth(0) * i, Position.Y + Font.Height), CanvasColor.RED, Text[i]);
             }
             base.Draw();
         }

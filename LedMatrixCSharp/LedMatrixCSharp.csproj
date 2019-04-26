@@ -4,6 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <StartupObject>LedMatrixCSharp.Program</StartupObject>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -132,13 +134,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="RGBLedMatrix">
-      <HintPath>RGBLedMatrix.dll</HintPath>
-    </Reference>
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
+    <Reference Include="RGBLedMatrix">
+      <HintPath>RGBLedMatrix.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

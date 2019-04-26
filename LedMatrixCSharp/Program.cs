@@ -25,11 +25,19 @@ namespace LedMatrixCSharp
                 matrixApplication = new MatrixApplication();
             }
 
+            StackPanel stackPanel = new StackPanel();
+
             Image image = new Image("Animations/7.bmp");
+            image.Dimensions = new Dimensions(16, 16);
+            image.Position = new CanvasPosition(8, 5);
 
-            matrixApplication.Child = image;
+            Label label = new Label("Tropfen");
+            label.Position.X = 2;
 
-            Random r = new Random();
+            stackPanel.Children.Add(image);
+            stackPanel.Children.Add(label);
+
+            matrixApplication.Child = stackPanel;
         }
     }
 }

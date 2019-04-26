@@ -15,9 +15,7 @@ namespace LedMatrixCSharp.Renderer
         private bool NoRender = false;
 
         public delegate void OnDraw();
-        public delegate void OnBeforeDraw();
         public event OnDraw draw;
-        public static event OnBeforeDraw beforeDraw;
 
         public static List<Canvas> RenderCache = new List<Canvas>();
 
@@ -27,9 +25,8 @@ namespace LedMatrixCSharp.Renderer
             RGBLedMatrixOptions ledMatrixOptions = new RGBLedMatrixOptions();
             ledMatrixOptions.Cols = 32;
             ledMatrixOptions.Rows = 32;
-            ledMatrixOptions.PwmDitherBits = 1;
-            ledMatrixOptions.ShowRefreshRate = true;
-
+            ledMatrixOptions.PwmLsbNanoseconds = 100; 
+                
             if (!NoRender)
             {
                 matrix = new RGBLedMatrix(ledMatrixOptions);
@@ -52,7 +49,6 @@ namespace LedMatrixCSharp.Renderer
                     canvas.Clear();
                 }
                 RenderCache.Clear();
-                beforeDraw?.Invoke();
                 draw?.Invoke();
                 Thread.Sleep(16);
             }
@@ -62,9 +58,9 @@ namespace LedMatrixCSharp.Renderer
             RenderCache.Reverse();
             foreach (var c in RenderCache)
             {
-                for (var x = 0; x < c.Width; x++)
+                for (var x = 0; x < c.Dimensions.Width; x++)
                 {
-                    for (var y = 0; y < c.Height; y++)
+                    for (var y = 0; y < c.Dimensions.Height; y++)
                     {
                         var color = c.GetPixel(new CanvasPosition { X = x, Y = y });
                         if (color != null)

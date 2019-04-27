@@ -29,13 +29,14 @@ namespace LedMatrixCSharp
 
             Image image = new Image("Animations/7.bmp");
             image.Dimensions = new Dimensions(16, 16);
-            image.Position = new CanvasPosition(8, 5);
+            image.Position = new CanvasPosition(8, 0);
 
-            Label label = new Label("Tropfen");
+            Label label = new Label("Hi Till :3");
             label.Position.X = 2;
+            Circle label1 = new Circle(5, 5, 20, CanvasColor.RED);
 
-            stackPanel.Children.Add(image);
             stackPanel.Children.Add(label);
+            stackPanel.Children.Add(image);
 
             matrixApplication.Child = stackPanel;
         }

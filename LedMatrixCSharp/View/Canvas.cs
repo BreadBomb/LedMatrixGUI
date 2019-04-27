@@ -95,13 +95,13 @@ namespace LedMatrixCSharp.View
 
         public void SetPixel(CanvasPosition pos, CanvasColor color)
         {
-            if (pos.X + this.Offset.X > Dimensions.Width - 1 || pos.Y + this.Offset.Y > Dimensions.Height - 1) return;
+            if (pos.X + this.Offset.X > Dimensions.Width - 1 || pos.Y + this.Offset.Y > Dimensions.Height - 1 || pos.X + this.Offset.X < 0 || pos.Y + this.Offset.Y < 0) return;
             this.pixelMap[pos.X + this.Offset.X, pos.Y + this.Offset.Y] = color;
         }
 
         public void SetPixel(int x, int y, CanvasColor color)
         {
-            if (x + this.Offset.X > Dimensions.Width - 1 || y + this.Offset.Y > Dimensions.Height - 1) return;
+            if (x + this.Offset.X > Dimensions.Width - 1 || y + this.Offset.Y > Dimensions.Height - 1 || x + this.Offset.X < 0 || y + this.Offset.Y < 0) return;
             this.pixelMap[x + this.Offset.X, y + this.Offset.Y] = color;
         }
 

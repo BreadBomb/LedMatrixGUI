@@ -23,18 +23,6 @@ namespace LedMatrixCSharp.View.Views
             }
         }
 
-        public new CanvasPosition Position
-        {
-            get
-            {
-                return base.Position;
-            }
-            set
-            {
-                base.Position = value;
-            }
-        }
-
         public string Path {
             get
             {

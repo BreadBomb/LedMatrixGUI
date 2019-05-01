@@ -67,7 +67,7 @@ namespace LedMatrixCSharp.Renderer
                         {
                             if (!NoRender)
                             {
-                                canvas.SetPixel(x, y, new Color(color.R, color.G, color.B));
+                                canvas.SetPixel(x + c.Offset.X, y + c.Offset.Y, new Color(color.R, color.G, color.B));
                             }
                         }
                     }

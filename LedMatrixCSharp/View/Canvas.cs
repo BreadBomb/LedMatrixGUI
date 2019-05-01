@@ -12,7 +12,9 @@ namespace LedMatrixCSharp.View
         public int X { get; set; }
         public int Y { get; set; }
 
-        public CanvasPosition() { }
+        public CanvasPosition()
+        {
+        }
 
         public CanvasPosition(int x, int y)
         {
@@ -36,6 +38,11 @@ namespace LedMatrixCSharp.View
         public static CanvasColor WHITE => new CanvasColor(255, 255, 255);
         public static CanvasColor GRAY => new CanvasColor(57, 62, 70);
         public static CanvasColor RED => new CanvasColor(232, 69, 69);
+        public static CanvasColor YELLOW => new CanvasColor(249, 237, 105);
+        public static CanvasColor GREEN => new CanvasColor(23, 185, 120);
+        public static CanvasColor ORANGE => new CanvasColor(250, 181, 122);
+        public static CanvasColor PINK => new CanvasColor(255, 46, 99);
+        public static CanvasColor BLUE => new CanvasColor(37, 59, 110);
 
         public CanvasColor(int R, int G, int B)
         {
@@ -47,40 +54,28 @@ namespace LedMatrixCSharp.View
 
     public class Canvas
     {
-        private CanvasPosition offset = new CanvasPosition() { X = 0, Y = 0 };
-        private Dimensions dimensions = new Dimensions();
+        private CanvasPosition _offset = new CanvasPosition() {X = 0, Y = 0};
+        private Dimensions _dimensions = new Dimensions();
 
-        public Dimensions Dimensions {
-            get
-            {
-                return this.dimensions;
-            }
-            private set
-            {
-                this.dimensions = value;
-                this.NeedRedraw.Invoke();
-            }
-        }
-        public CanvasPosition Offset {
-            get
-            {
-                return this.offset;
-            }
+        public Dimensions Dimensions
+        {
+            get { return this._dimensions; }
             set
             {
-                this.offset = value;
-                this.NeedRedraw.Invoke();
+                this._dimensions = value;
+                this.pixelMap = new CanvasColor[this._dimensions.Width, this._dimensions.Height];
             }
-        } 
-        private CanvasColor[,] pixelMap;
-        public delegate void OnNeedRedraw();
-        public event OnNeedRedraw NeedRedraw;
-
-        public Canvas(int width, int height)
-        {
-            this.dimensions = new Dimensions(width, height);
-            this.pixelMap = new CanvasColor[this.Dimensions.Width, this.Dimensions.Height];
         }
+
+        public CanvasPosition Offset
+        {
+            get { return this._offset; }
+            set { this._offset = value; }
+        }
+
+        private CanvasColor[,] pixelMap = new CanvasColor[0,0];
+
+        public Canvas() {}
 
         public void Fill(CanvasColor color)
         {
@@ -95,14 +90,20 @@ namespace LedMatrixCSharp.View
 
         public void SetPixel(CanvasPosition pos, CanvasColor color)
         {
-            if (pos.X + this.Offset.X > Dimensions.Width - 1 || pos.Y + this.Offset.Y > Dimensions.Height - 1 || pos.X + this.Offset.X < 0 || pos.Y + this.Offset.Y < 0) return;
-            this.pixelMap[pos.X + this.Offset.X, pos.Y + this.Offset.Y] = color;
+            SetPixel(pos.X, pos.Y, color);
         }
 
         public void SetPixel(int x, int y, CanvasColor color)
         {
-            if (x + this.Offset.X > Dimensions.Width - 1 || y + this.Offset.Y > Dimensions.Height - 1 || x + this.Offset.X < 0 || y + this.Offset.Y < 0) return;
-            this.pixelMap[x + this.Offset.X, y + this.Offset.Y] = color;
+            // Return if outside of Matrix
+            if (OutsideCanvas(x, y)) return;
+            this.pixelMap[x, y] = color;
+        }
+
+        private bool OutsideCanvas(int x, int y)
+        {
+            return x > Dimensions.Width - 1 || y > Dimensions.Height - 1 ||
+                   x < 0 || y < 0;
         }
 
         public CanvasColor GetPixel(CanvasPosition pos)

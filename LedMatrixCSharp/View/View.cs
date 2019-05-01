@@ -7,24 +7,35 @@ namespace LedMatrixCSharp.View
 {
     public class View
     {
-        public CanvasPosition Position { get; set; } = new CanvasPosition();
-        public Dimensions Dimensions { get; set; } = new Dimensions(32, 32);
+        public CanvasPosition Position
+        {
+            get => Canvas.Offset;
+            set => Canvas.Offset = value;
+        }
+
+        public Dimensions Dimensions
+        {
+            get => Canvas.Dimensions;
+            set => Canvas.Dimensions = value;
+        }
         public Canvas Canvas;
+        private bool noRenderCache = false;
 
         public View()
         {
-            this.Canvas = new Canvas(Dimensions.Width, Dimensions.Height);
-            this.Canvas.NeedRedraw += new Canvas.OnNeedRedraw(NeedRedraw);
-        }
-
-        private void NeedRedraw()
-        {
-            Canvas.Clear();
+            this.Canvas = new Canvas();
         }
 
         public virtual void Draw()
         {
-            Renderer.Renderer.RenderCache.Add(Canvas);
+            if (!noRenderCache)
+                Renderer.Renderer.RenderCache.Add(Canvas);
+        }
+
+        public void DrawInsideCanvas(ref Canvas canvas)
+        {
+            this.Canvas = canvas;
+            noRenderCache = true;
         }
     }
 }

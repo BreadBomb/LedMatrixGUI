@@ -1,38 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using LedMatrixCSharp.Utils;
 using LedMatrixCSharp.View.Views;
 using rpi_rgb_led_matrix_sharp;
 
 namespace LedMatrixCSharp.View.Layout
 {
-    class StackPanel : View
+    public class StackPanel : View
     {
+        private int lastKnownChildrenCount = 0;
 
-        public IList<View> Children = new List<View>();
+        private IList<View> children = new List<View>();
         public Orientation Orientation { get; set; } = Orientation.Vertical;
 
-        public StackPanel(): base() { }
+        public void Add(View view)
+        {
+            view.DrawInsideCanvas(ref Canvas);
+            this.Dimensions = new Dimensions(Dimensions.Width, Dimensions.Height + view.Dimensions.Height);
+            children.Add(view);
+        }
+
+        public StackPanel(): base() {
+            
+        }
 
         public override void Draw()
         {
+         
             int actualOffset = 0;
 
             Canvas.Fill(CanvasColor.GRAY);
 
-            foreach (View child in Children)
-            { 
-                if (Orientation == Orientation.Vertical)
-                    child.Canvas.Offset.Set(0, actualOffset);
-                if (Orientation == Orientation.Horizontal)
-                    child.Canvas.Offset.Set(actualOffset, 0);
+            View lastView = null;
 
+            foreach (View child in children)
+            {
+                int testY = 0;
+                if (lastView != null)
+                {
+                    testY = lastView.Position.Y + lastView.Dimensions.Height;
+                }
+
+                if (Orientation == Orientation.Vertical)
+                    child.Position = new CanvasPosition(0, testY);
+                if (Orientation == Orientation.Horizontal)
+                    child.Position = new CanvasPosition(lastView.Position.X + lastView.Dimensions.Width + Position.X, 0);
+
+                lastView = child;
                 child.Draw();
-
-                if (Orientation == Orientation.Vertical)
-                    actualOffset += child.Dimensions.Height + child.Position.Y;
-                if (Orientation == Orientation.Horizontal)
-                    actualOffset += child.Dimensions.Width + child.Position.Y;
             }
             base.Draw();
         }

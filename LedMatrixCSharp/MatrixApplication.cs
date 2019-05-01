@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LedMatrixCSharp
 {
-    class MatrixApplication
+    public class MatrixApplication
     {
         public View.View Child;
         public bool NoRender = false;

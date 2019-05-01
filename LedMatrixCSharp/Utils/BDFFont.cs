@@ -123,7 +123,6 @@ namespace LedMatrixCSharp.Utils
             var glyph = FindGlyph(unicode);
             if (glyph == null) glyph = FindGlyph(UnicodeReplacementCodepoint);
             if (glyph == null) return false;
-            position.Y = position.Y - glyph.Height - glyph.Offset.Y;
             for(int y = 0; y < glyph.Height; y++)
             {
                 var bitmap = glyph.Bitmap[y];

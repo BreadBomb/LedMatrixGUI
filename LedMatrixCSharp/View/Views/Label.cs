@@ -23,6 +23,8 @@ namespace LedMatrixCSharp.View.Views
                 base.Position = value;
             }
         }
+        
+        public CanvasColor Color { get; set; }
 
         public string Text
         {
@@ -60,7 +62,7 @@ namespace LedMatrixCSharp.View.Views
         {
             for (var i = 0; i < Text.Length; i++)
             {
-                Font.DrawGlyph(ref Canvas, new CanvasPosition(Position.X + Font.getCharacterWidth(0) * i, Position.Y + Font.Height), CanvasColor.RED, Text[i]);
+                Font.DrawGlyph(ref Canvas, new CanvasPosition(Position.X + Font.getCharacterWidth(0) * i, Position.Y + Font.Height), Color, Text[i]);
             }
             base.Draw();
         }

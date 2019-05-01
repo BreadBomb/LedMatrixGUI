@@ -2,14 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using LedMatrixCSharp.Utils;
 
 namespace LedMatrixCSharp.View.Views
 {
-    class Rectangle : View
+    public class Rectangle : View
     {
-        private CanvasColor borderColor;
-        private CanvasColor fillColor;
-
         public CanvasColor BorderColor { get; set; }
         public CanvasColor FillColor { get; set; }
 
@@ -17,8 +15,7 @@ namespace LedMatrixCSharp.View.Views
         {
             this.Position.X = x;
             this.Position.Y = y;
-            this.Dimensions.Width = width;
-            this.Dimensions.Height = height;
+            this.Dimensions = new Dimensions(width, height);
             this.BorderColor = borderColor;
         }
 
@@ -26,20 +23,19 @@ namespace LedMatrixCSharp.View.Views
         {
             this.Position.X = x;
             this.Position.Y = y;
-            this.Dimensions.Width = width;
-            this.Dimensions.Height = height;
+            this.Dimensions = new Dimensions(width, height);
             this.BorderColor = borderColor;
             this.FillColor = fillColor;
         }
 
         public override void Draw()
         {
-            for (int x = Position.X; x < Position.X + Dimensions.Width; x++)
+            for (int x = 0; x < Dimensions.Width; x++)
             {
-                for (int y = Position.Y; y < Position.Y + Dimensions.Height; y++)
+                for (int y = 0; y < Dimensions.Height; y++)
                 {
                     CanvasColor drawColor = FillColor;
-                    if (x == 0 || y == 0 || x == Position.X + Dimensions.Width - 1 || y == Position.Y + Dimensions.Height - 1) drawColor = BorderColor;
+                    if (x == 0 || y == 0 || x == 0 + Dimensions.Width - 1 || y == 0 + Dimensions.Height - 1) drawColor = BorderColor;
                     if (drawColor != null)
                         Canvas.SetPixel(new CanvasPosition { X = x, Y = y }, drawColor);
                 }

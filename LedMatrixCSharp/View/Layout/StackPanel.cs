@@ -16,8 +16,10 @@ namespace LedMatrixCSharp.View.Layout
 
         public void Add(View view)
         {
-            view.DrawInsideCanvas(ref Canvas);
-            this.Dimensions = new Dimensions(Dimensions.Width, Dimensions.Height + view.Dimensions.Height);
+            var width = 0;
+            if (view.Dimensions.Width > width)
+                width = view.Dimensions.Width;
+            this.Dimensions = new Dimensions(width, Dimensions.Height + view.Dimensions.Height);
             children.Add(view);
         }
 

@@ -17,7 +17,13 @@ namespace LedMatrixCSharp.View.Layout
             set
             {
                 child = value;
-                this.Dimensions = new Dimensions(Child.Dimensions.Width + 1, Child.Dimensions.Height);
+                var childDimensions = Child.Dimensions;
+                if (child.Dimensions.Width >= 32)
+                {
+                    child.Dimensions = new Dimensions(31, child.Dimensions.Height);
+                }
+                this.Dimensions = new Dimensions(32, Child.Dimensions.Height);
+                child.DrawInsideCanvas(ref Canvas);
             }
         }
 
@@ -83,6 +89,7 @@ namespace LedMatrixCSharp.View.Layout
                             //Encoder has turned 1 detent clockwise. Update the counter:
                             encoderPos++;
                             yOffset--;
+                            Console.WriteLine("DOWN");
                         }
                     }
                     //Else if pin 26 / Pin7 / pin2's value changed and its value is now 1...
@@ -94,6 +101,7 @@ namespace LedMatrixCSharp.View.Layout
                             //Encoder has turned 1 detent anti-clockwise. Update the counter:
                             encoderPos--;
                             yOffset++;
+                            Console.WriteLine("UP");
                         }
                     }
                 }
@@ -105,19 +113,24 @@ namespace LedMatrixCSharp.View.Layout
         {
             if (Child.Dimensions.Height != Dimensions.Height)
             {
+                Console.Write("New Dimensions " +  Child.Dimensions.Width + Child.Dimensions.Height);
                 this.Dimensions = new Dimensions(Child.Dimensions.Width + 1, Child.Dimensions.Height);
             }
             Canvas.Clear();
-            Canvas.SetPixel(31, 0, CanvasColor.GRAY);
-            Canvas.SetPixel(31, 31, CanvasColor.GRAY);
+            Canvas.SetPixel(31, 0, CanvasColor.YELLOW);
+            Canvas.SetPixel(31, 31, CanvasColor.YELLOW);
             for (int i = 0; i < (30d / (Dimensions.Height+32))*30d; i++)
             {
                 Canvas.SetPixel(31, i+1+(int)Math.Round(((double)-yOffset / (double)(Child.Dimensions.Height)) * 32, 0), CanvasColor.WHITE);
             }
 
-            Child?.Draw();
-            if (Child != null) 
+            if (Child != null)
+            {
                 Child.Position = new CanvasPosition(Child.Position.X, yOffset);
+                Console.WriteLine(Child.Position.X + ", " + Child.Position.Y);                
+            }
+
+            Child?.Draw();
 
             base.Draw();
         }

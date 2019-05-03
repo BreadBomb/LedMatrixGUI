@@ -9,18 +9,20 @@ namespace LedMatrixCSharp
     {
         public View.View Child;
         public bool NoRender = false;
+        private Renderer.Renderer renderer;
         
         public MatrixApplication(bool noRender = false)
         {
             this.NoRender = noRender;
-            var renderer = new Renderer.Renderer(NoRender);
-            renderer.draw += new Renderer.Renderer.OnDraw(OnDraw);
-            
+            renderer = new Renderer.Renderer(NoRender);
+            renderer.update += new Renderer.Renderer.OnUpdate(OnUpdate);
+            renderer.Start();
         }
 
-        private void OnDraw()
+        public virtual void OnUpdate()
         {
-            Child?.Draw();
+            Child?.Update();
+            renderer.UpdateCanvas(Child);
         }
     }
 }

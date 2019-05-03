@@ -7,28 +7,6 @@ using LedMatrixCSharp.Utils;
 
 namespace LedMatrixCSharp.View
 {
-    public class CanvasPosition
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-
-        public CanvasPosition()
-        {
-        }
-
-        public CanvasPosition(int x, int y)
-        {
-            this.X = x;
-            this.Y = y;
-        }
-
-        public void Set(int x, int y)
-        {
-            this.X = x;
-            this.Y = y;
-        }
-    }
-
     public class CanvasColor
     {
         public int R { get; set; }
@@ -54,43 +32,74 @@ namespace LedMatrixCSharp.View
 
     public class Canvas
     {
-        private CanvasPosition _offset = new CanvasPosition() {X = 0, Y = 0};
-        private Dimensions _dimensions = new Dimensions();
+        private int _Width = 0;
+        private int _Height = 0;
+        private int _X = 0;
+        private int _Y = 0;
 
-        public Dimensions Dimensions
+
+        public int Width
         {
-            get { return this._dimensions; }
+            get
+            {
+                return _Width;
+            }
             set
             {
-                this._dimensions = value;
-                this.pixelMap = new CanvasColor[this._dimensions.Width, this._dimensions.Height];
+                _Width = value;
+                pixelMap = new CanvasColor[Width, Height];
+            }
+        }
+        public int Height
+        {
+            get
+            {
+                return _Height;
+            }
+            set
+            {
+                _Height = value;
+                pixelMap = new CanvasColor[Width, Height];
             }
         }
 
-        public CanvasPosition Offset
+        public int X
         {
-            get { return this._offset; }
-            set { this._offset = value; }
+            get
+            {
+                return _X;
+            }
+            set
+            {
+                _X = value;
+            }
+        }
+        public int Y
+        {
+            get
+            {
+                return _Y;
+            }
+            set
+            {
+                _Y = value;
+            }
         }
 
-        private CanvasColor[,] pixelMap = new CanvasColor[0,0];
+        // private protected is not available in core 2.2 :( this is sad
+        protected internal CanvasColor[,] pixelMap = new CanvasColor[0,0];
 
         public Canvas() {}
 
         public void Fill(CanvasColor color)
         {
-            for (var x = 0; x < Dimensions.Width; x++)
+            for (var x = 0; x < Width; x++)
             {
-                for (var y = 0; y < Dimensions.Height; y++)
+                for (var y = 0; y < Height; y++)
                 {
                     SetPixel(x, y, color);
                 }
             }
-        }
-
-        public void SetPixel(CanvasPosition pos, CanvasColor color)
-        {
-            SetPixel(pos.X, pos.Y, color);
         }
 
         public void SetPixel(int x, int y, CanvasColor color)
@@ -102,18 +111,18 @@ namespace LedMatrixCSharp.View
 
         private bool OutsideCanvas(int x, int y)
         {
-            return x > Dimensions.Width - 1 || y > Dimensions.Height - 1 ||
+            return x > Width - 1 || y > Height - 1 ||
                    x < 0 || y < 0;
         }
 
-        public CanvasColor GetPixel(CanvasPosition pos)
+        public CanvasColor GetPixel(int x, int y)
         {
-            return this.pixelMap[pos.X, pos.Y];
+            return this.pixelMap[x, y];
         }
 
         public void Clear()
         {
-            this.pixelMap = new CanvasColor[this.Dimensions.Width, this.Dimensions.Height];
+            this.pixelMap = new CanvasColor[Width, Height];
         }
     }
 }

@@ -7,52 +7,34 @@ using rpi_rgb_led_matrix_sharp;
 
 namespace LedMatrixCSharp.View.Layout
 {
-    public class StackPanel : View
+    public class StackPanel : Panel
     {
-        private int lastKnownChildrenCount = 0;
-
-        private IList<View> children = new List<View>();
+        public IList<View> Children = new List<View>();
         public Orientation Orientation { get; set; } = Orientation.Vertical;
 
-        public void Add(View view)
-        {
-            var width = 0;
-            if (view.Dimensions.Width > width)
-                width = view.Dimensions.Width;
-            this.Dimensions = new Dimensions(width, Dimensions.Height + view.Dimensions.Height);
-            children.Add(view);
-        }
 
         public StackPanel(): base() {
-            
+            Width = 32;
         }
 
-        public override void Draw()
+        public override void Update()
         {
-         
+            Clear();
             int actualOffset = 0;
 
-            Canvas.Fill(CanvasColor.GRAY);
-
-            View lastView = null;
-
-            foreach (View child in children)
+            foreach (View child in Children)
             {
-                int testY = 0;
-                if (lastView != null)
-                {
-                    testY = lastView.Position.Y + lastView.Dimensions.Height;
-                }
+                child.OffsetY = actualOffset;
+                Height = actualOffset;
 
-                if (Orientation == Orientation.Vertical)
-                    child.Position = new CanvasPosition(0, testY);
-                if (Orientation == Orientation.Horizontal)
-                    child.Position = new CanvasPosition(lastView.Position.X + lastView.Dimensions.Width + Position.X, 0);
+                child.Update();
 
-                lastView = child;
-                child.Draw();
+                Concat(child);
+
+                actualOffset += child.Height + child.Y;
             }
-            base.Draw();
+
+            base.Update();
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using LedMatrixCSharp.Utils;
+using System.Threading;
 
 namespace LedMatrixCSharp.View.Views
 {
@@ -11,36 +12,31 @@ namespace LedMatrixCSharp.View.Views
         public CanvasColor BorderColor { get; set; }
         public CanvasColor FillColor { get; set; }
 
-        public Rectangle(int x, int y, int width, int height, CanvasColor borderColor): base()
-        {
-            this.Position.X = x;
-            this.Position.Y = y;
-            this.Dimensions = new Dimensions(width, height);
-            this.BorderColor = borderColor;
-        }
+        public Rectangle(int x, int y, int width, int height, CanvasColor borderColor): this(x, y, width, height, borderColor, null) { }
 
         public Rectangle(int x, int y, int width, int height, CanvasColor borderColor, CanvasColor fillColor): base()
         {
-            this.Position.X = x;
-            this.Position.Y = y;
-            this.Dimensions = new Dimensions(width, height);
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
             this.BorderColor = borderColor;
             this.FillColor = fillColor;
         }
 
-        public override void Draw()
+        public override void Update()
         {
-            for (int x = 0; x < Dimensions.Width; x++)
+            Clear();
+            for (int x = 0; x < Width; x++)
             {
-                for (int y = 0; y < Dimensions.Height; y++)
+                for (int y = 0; y < Height; y++)
                 {
                     CanvasColor drawColor = FillColor;
-                    if (x == 0 || y == 0 || x == 0 + Dimensions.Width - 1 || y == 0 + Dimensions.Height - 1) drawColor = BorderColor;
+                    if (x == 0 || y == 0 || x == 0 + Width - 1 || y == 0 + Height - 1) drawColor = BorderColor;
                     if (drawColor != null)
-                        Canvas.SetPixel(new CanvasPosition { X = x, Y = y }, drawColor);
+                        SetPixel(x, y, drawColor);
                 }
             }
-            base.Draw();
         }
     }
 }

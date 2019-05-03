@@ -17,7 +17,8 @@ namespace LedMatrixCSharp.Utils
             public int DeviceHeight { get; set; }
             public int Width { get; set; }
             public int Height { get; set; }
-            public CanvasPosition Offset { get; set; } = new CanvasPosition();
+            public int OffsetX { get; set; }
+            public int OffsetY { get; set; }
             public int[] Bitmap { get; set; }
         }
 
@@ -76,8 +77,8 @@ namespace LedMatrixCSharp.Utils
                     var values = line.Split(' ');
                     currentGlyph.Width = int.Parse(values[1]);
                     currentGlyph.Height = int.Parse(values[2]);
-                    currentGlyph.Offset.X = int.Parse(values[3]);
-                    currentGlyph.Offset.Y = int.Parse(values[4]);
+                    currentGlyph.OffsetX = int.Parse(values[3]);
+                    currentGlyph.OffsetY = int.Parse(values[4]);
                     currentGlyph.Bitmap = new int[currentGlyph.Height];
                     row = -1;
                 }
@@ -113,32 +114,32 @@ namespace LedMatrixCSharp.Utils
             return this.glyphs[unicode];
         }
 
-        public bool DrawGlyph(ref Canvas canvas, CanvasPosition position, CanvasColor color, int unicode)
+        public bool DrawGlyph(ref Canvas canvas, int x, int y, CanvasColor color, int unicode)
         {
-            return DrawGlyph(ref canvas, position, color, null, unicode);
+            return DrawGlyph(ref canvas, x, y, color, null, unicode);
         }
 
-        public bool DrawGlyph(ref Canvas canvas, CanvasPosition position, CanvasColor color, CanvasColor background, int unicode)
+        public bool DrawGlyph(ref Canvas canvas, int x, int y, CanvasColor color, CanvasColor background, int unicode)
         {
             var glyph = FindGlyph(unicode);
             if (glyph == null) glyph = FindGlyph(UnicodeReplacementCodepoint);
             if (glyph == null) return false;
-            for(int y = 0; y < glyph.Height; y++)
+            for(int _y = 0; y < glyph.Height; y++)
             {
                 var bitmap = glyph.Bitmap[y];
                 var bitString = Convert.ToString(bitmap, 2);
                 int[] bits = bitString.PadLeft(8, '0') // Add 0's from left
                     .Select(c => int.Parse(c.ToString())) // convert each char to int
                     .ToArray();
-                for(int x = 0; x < glyph.DeviceWidth; x++)
+                for(int _x = 0; x < glyph.DeviceWidth; x++)
                 {
                     if (bits[x] == 1)
                     {
-                        canvas.SetPixel(position.X + x, position.Y + y, color);
+                        canvas.SetPixel(x + _x, y + _y, color);
                     }
                     if (bits[x] == 0 && background != null)
                     {
-                        canvas.SetPixel(position.X + x, position.Y + y, background);
+                        canvas.SetPixel(x + _x, y + _y, background);
                     }
                 }
             } 

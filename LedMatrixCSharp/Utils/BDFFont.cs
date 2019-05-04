@@ -1,6 +1,7 @@
 ﻿using LedMatrixCSharp.View;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,6 +9,24 @@ using System.Text;
 
 namespace LedMatrixCSharp.Utils
 {
+    public class FontCache
+    {
+        private static FontCache _Instance = null;
+        public static FontCache Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new FontCache();
+                }
+
+                return _Instance;
+            }
+        }
+        
+        public Dictionary<string, Dictionary<int, BDFFont.Glyph>> Fonts = new Dictionary<string, Dictionary<int, BDFFont.Glyph>>();
+    }
 
     public class BDFFont
     {
@@ -24,8 +43,33 @@ namespace LedMatrixCSharp.Utils
 
         private Dictionary<int, Glyph> glyphs = new Dictionary<int, Glyph>();
 
-        public bool LoadFont4x6() => this.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf"));
-        public bool LoadFont5x7() => this.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf"));
+        public bool LoadFont4x6()
+        {
+            if (!FontCache.Instance.Fonts.ContainsKey(Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf")))
+            {
+                var result = this.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf"));
+                FontCache.Instance.Fonts.Add(Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf"), glyphs);
+                return result;
+            }
+
+            glyphs = FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf")];
+            Height = glyphs[0].Height;
+            return true;
+        }
+
+        public bool LoadFont5x7()
+        {
+            if (!FontCache.Instance.Fonts.ContainsKey(Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf")))
+            {
+                var result = this.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf"));  
+                FontCache.Instance.Fonts.Add(Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf"), glyphs);
+                return result;
+            }
+
+            glyphs = FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf")];
+            Height = glyphs[0].Height;
+            return true;
+        }
 
         public BDFFont() { }
 
@@ -114,30 +158,30 @@ namespace LedMatrixCSharp.Utils
             return this.glyphs[unicode];
         }
 
-        public bool DrawGlyph(ref Canvas canvas, int x, int y, CanvasColor color, int unicode)
+        public bool DrawGlyph(Canvas canvas, int x, int y, CanvasColor color, int unicode)
         {
-            return DrawGlyph(ref canvas, x, y, color, null, unicode);
+            return DrawGlyph(canvas, x, y, color, null, unicode);
         }
 
-        public bool DrawGlyph(ref Canvas canvas, int x, int y, CanvasColor color, CanvasColor background, int unicode)
+        public bool DrawGlyph(Canvas canvas, int x, int y, CanvasColor color, CanvasColor background, int unicode)
         {
             var glyph = FindGlyph(unicode);
             if (glyph == null) glyph = FindGlyph(UnicodeReplacementCodepoint);
             if (glyph == null) return false;
-            for(int _y = 0; y < glyph.Height; y++)
+            for(int _y = 0; _y < glyph.Height; _y++)
             {
-                var bitmap = glyph.Bitmap[y];
+                var bitmap = glyph.Bitmap[_y];
                 var bitString = Convert.ToString(bitmap, 2);
                 int[] bits = bitString.PadLeft(8, '0') // Add 0's from left
                     .Select(c => int.Parse(c.ToString())) // convert each char to int
                     .ToArray();
-                for(int _x = 0; x < glyph.DeviceWidth; x++)
+                for(int _x = 0; _x < glyph.DeviceWidth; _x++)
                 {
-                    if (bits[x] == 1)
+                    if (bits[_x] == 1)
                     {
                         canvas.SetPixel(x + _x, y + _y, color);
                     }
-                    if (bits[x] == 0 && background != null)
+                    if (bits[_x] == 0 && background != null)
                     {
                         canvas.SetPixel(x + _x, y + _y, background);
                     }

@@ -30,7 +30,6 @@ namespace LedMatrixCSharp.Renderer
             RGBLedMatrixOptions ledMatrixOptions = new RGBLedMatrixOptions();
             ledMatrixOptions.Cols = 32;
             ledMatrixOptions.Rows = 32;
-            ledMatrixOptions.PwmLsbNanoseconds = 100; 
                 
             if (!NoRender)
             {

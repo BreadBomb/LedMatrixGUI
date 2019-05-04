@@ -13,7 +13,6 @@
   <ItemGroup>
     <None Remove="Fonts\10x20.bdf" />
     <None Remove="Fonts\4x6.bdf" />
-    <None Remove="Fonts\5x7.bdf" />
     <None Remove="Fonts\5x8.bdf" />
     <None Remove="Fonts\6x10.bdf" />
     <None Remove="Fonts\6x12.bdf" />
@@ -42,6 +41,9 @@
     <None Update="Animations\7.bmp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Fonts\5x7.bdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -49,9 +51,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Fonts\4x6.bdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Fonts\5x7.bdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Fonts\5x8.bdf">

@@ -132,11 +132,14 @@
 
   <ItemGroup>
     <PackageReference Include="BrainbeanApps.ValueAnimation" Version="1.0.0" />
-    <PackageReference Include="Raspberry.IO.GeneralPurpose3" Version="3.1.1" />
-    <PackageReference Include="Raspberry.System3" Version="3.1.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0006" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0-preview4.19212.13" />
+    <PackageReference Include="Unosquare.PiGpio" Version="0.0.2" />
+    <PackageReference Include="Unosquare.Raspberry.Abstractions" Version="0.3.0" />
+    <PackageReference Include="Unosquare.Raspberry.IO" Version="0.19.0" />
+    <PackageReference Include="Unosquare.RaspberryIO.Peripherals" Version="0.2.4" />
+    <PackageReference Include="Unosquare.WiringPi" Version="0.3.0" />
   </ItemGroup>
 
   <ItemGroup>

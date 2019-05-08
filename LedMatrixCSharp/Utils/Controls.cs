@@ -1,17 +1,28 @@
-using Raspberry.IO.GeneralPurpose;
 using System;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Runtime.Serialization;
+using Unosquare.RaspberryIO;
+using Unosquare.RaspberryIO.Abstractions;
+using Unosquare.PiGpio;
+using Unosquare.WiringPi;
 
 namespace LedMatrixCSharp.Utils
 {
+    public class Scroller
+    {
+        public int Position { get; set; }
+        public IGpioPin UpPin { get; set; }
+        public IGpioPin DownPin { get; set; }
+        public int LastPin { get; set; }
+    }
+
     public class Controls
     {
         private static Controls controls;
         
-        private static Dictionary<string, InputPinConfiguration> Buttons = new Dictionary<string, InputPinConfiguration>();
-        private static Dictionary<string, InputPinConfiguration[]> Scrollers = new Dictionary<string, InputPinConfiguration[]>();
+        private static Dictionary<string, IGpioPin> Buttons = new Dictionary<string, IGpioPin>();
+        private static Dictionary<string, Scroller> Scrollers = new Dictionary<string, Scroller>();
 
         public static Controls Instance
         {
@@ -25,38 +36,85 @@ namespace LedMatrixCSharp.Utils
             }
         }
 
-        public Controls(){
+        public Controls()
+        {
+            Pi.Init<BootstrapWiringPi>();
+
+            var rot = Pi.Gpio[20];
+            rot.PinMode = GpioPinDriveMode.Output;
+            var blau = Pi.Gpio[6];
+            blau.PinMode = GpioPinDriveMode.Output;
+            var gruen = Pi.Gpio[13];
+            gruen.PinMode = GpioPinDriveMode.Output;
+            rot.Value = true;
+            blau.Value = false;
+            gruen.Value = true;
         }
 
-        public static void AddButton(string name, ConnectorPin pin)
+        public void AddButton(string name, int pin)
         {
-            var button = pin.Input();
-            button.Resistor = PinResistor.PullUp;
+            var button = Pi.Gpio[pin];
+            button.PinMode = GpioPinDriveMode.Input;
+            button.InputPullMode = GpioPinResistorPullMode.PullDown;
             Buttons.Add(name, button);
         }
         
-        public static void AddScroller(string name, string up, string down)
+        public void AddScroller(string name, P1 up, P1 down)
         {
-            //Enum.TryParse(up, out ConnectorPin pinUp);
-            //Enum.TryParse(up, out ConnectorPin pinDown);
-            
-            
-            //var scrollUp = pinUp.Input();
-            //var scrollDown = pinDown.Input();
-            
-            //Scrollers.Add(name, new InputPinConfiguration[] {scrollUp, scrollDown});
+            var upPin = Pi.Gpio[up];
+            upPin.PinMode = GpioPinDriveMode.Input;
+            var downPin = Pi.Gpio[down];
+            downPin.PinMode = GpioPinDriveMode.Input;
+
+            var scroller = new Scroller()
+            {
+                UpPin = upPin,
+                DownPin = downPin
+            };
+
+            Scrollers.Add(name, scroller);
 
             //Console.WriteLine("Registered Scroller " + name);
         }
 
-        public Action<bool> OnButtonClick(string name)
+        public void OnButtonClick(string name, Action<int, int, uint> action)
         {
-            return Buttons[name].StatusChangedAction;
+            Buttons[name].RegisterInterruptCallback(EdgeDetection.RisingEdge, action);
         }
 
-        public static Action<bool>[] OnScrollerScrolled(string name)
+        public void OnScrollerScrolled(string name, Action<int, Scroller> action)
         {
-            return new Action<bool>[] { Scrollers[name][0].StatusChangedAction, Scrollers[name][1].StatusChangedAction };
+            if (!Scrollers.ContainsKey(name)) return;
+            var scroller = Scrollers[name];
+
+            Action<int ,bool> pinChanged = (gpio, status) =>
+            {
+                Console.WriteLine($"{gpio}: {status}");
+                if (gpio != scroller.LastPin)
+                {
+                    scroller.LastPin = gpio;
+
+                    if ((gpio == scroller.UpPin.BcmPinNumber) && (status == false))
+                    {
+                        if (!scroller.DownPin.Value)
+                        {
+                            scroller.Position++;
+                            action.Invoke(0, scroller);
+                        }
+                    }
+                    else if ((gpio == scroller.DownPin.BcmPinNumber) && (status == true))
+                    {
+                        if (scroller.UpPin.Value)
+                        {
+                            scroller.Position--;
+                            action.Invoke(1, scroller);
+                        }
+                    }
+                }
+            };
+
+            scroller.UpPin.RegisterInterruptCallback(EdgeDetection.RisingEdge, () => pinChanged.Invoke(scroller.UpPin.BcmPinNumber, scroller.UpPin.Value));
+            scroller.DownPin.RegisterInterruptCallback(EdgeDetection.RisingEdge, () => pinChanged.Invoke(scroller.DownPin.BcmPinNumber, scroller.DownPin.Value));
         }
     }
 }

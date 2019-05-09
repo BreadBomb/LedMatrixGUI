@@ -18,11 +18,10 @@ namespace LedMatrixCSharp.View.Views
         private char new_c;
         private Timer animationTimer;
 
-        public AnimatedChar(char c)
+        public AnimatedChar(char c, BDFFont font)
         {
             this.c = c;
-            font = new BDFFont();
-            font.LoadFont5x7();
+            this.font = font;
             animationStopwatch = new Stopwatch();
             Width = font.getCharacterWidth(0);
             Height = font.Height;

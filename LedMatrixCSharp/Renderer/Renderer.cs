@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Timers;
+using Unosquare.Swan;
 
 namespace LedMatrixCSharp.Renderer
 {
@@ -30,10 +31,11 @@ namespace LedMatrixCSharp.Renderer
             RGBLedMatrixOptions ledMatrixOptions = new RGBLedMatrixOptions();
             ledMatrixOptions.Cols = 32;
             ledMatrixOptions.Rows = 32;
+            ledMatrixOptions.PwmLsbNanoseconds = 50;
                 
             if (!NoRender)
             {
-                matrix = new RGBLedMatrix(ledMatrixOptions);
+                matrix = new RGBLedMatrix(ledMatrixOptions);                
                 canvas = matrix.CreateOffscreenCanvas();
                 Console.WriteLine("Matrix and Canvas initalized");
             }

@@ -12,7 +12,6 @@ namespace LedMatrixCSharp.View
 
         public View()
         {
-
         }
 
         public virtual void Update()

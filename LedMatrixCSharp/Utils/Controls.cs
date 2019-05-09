@@ -89,12 +89,11 @@ namespace LedMatrixCSharp.Utils
 
             Action<int ,bool> pinChanged = (gpio, status) =>
             {
-                Console.WriteLine($"{gpio}: {status}");
                 if (gpio != scroller.LastPin)
                 {
                     scroller.LastPin = gpio;
 
-                    if ((gpio == scroller.UpPin.BcmPinNumber) && (status == false))
+                    if (gpio == scroller.UpPin.BcmPinNumber && !status)
                     {
                         if (!scroller.DownPin.Value)
                         {
@@ -102,7 +101,7 @@ namespace LedMatrixCSharp.Utils
                             action.Invoke(0, scroller);
                         }
                     }
-                    else if ((gpio == scroller.DownPin.BcmPinNumber) && (status == true))
+                    else if (gpio == scroller.DownPin.BcmPinNumber && status)
                     {
                         if (scroller.UpPin.Value)
                         {
@@ -113,8 +112,8 @@ namespace LedMatrixCSharp.Utils
                 }
             };
 
-            scroller.UpPin.RegisterInterruptCallback(EdgeDetection.RisingEdge, () => pinChanged.Invoke(scroller.UpPin.BcmPinNumber, scroller.UpPin.Value));
-            scroller.DownPin.RegisterInterruptCallback(EdgeDetection.RisingEdge, () => pinChanged.Invoke(scroller.DownPin.BcmPinNumber, scroller.DownPin.Value));
+            scroller.UpPin.RegisterInterruptCallback(EdgeDetection.FallingEdge, () => pinChanged.Invoke(scroller.UpPin.BcmPinNumber, scroller.UpPin.Value));
+            scroller.DownPin.RegisterInterruptCallback(EdgeDetection.FallingEdge, () => pinChanged.Invoke(scroller.DownPin.BcmPinNumber, scroller.DownPin.Value));
         }
     }
 }

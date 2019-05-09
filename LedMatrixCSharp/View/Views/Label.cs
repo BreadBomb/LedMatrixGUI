@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Xml;
 
@@ -9,62 +10,59 @@ namespace LedMatrixCSharp.View.Views
 {
     public class Label : View
     {
-        //private string _text;
-        //private BDFFont _font = new BDFFont();
+        private string _text;
+        private BDFFont _font = new BDFFont();
+        public CanvasColor Color { get; set; }
 
-        //public new CanvasPosition Position
-        //{
-        //    get
-        //    {
-        //        return base.Position;
-        //    }
-        //    set
-        //    {
-        //        base.Position = value;
-        //    }
-        //}
+        public string Text
+        {
+            get { return _text; }
+            set
+            {
+                this._text = value;
+                if (Font != null)
+                {
+                    foreach (char c in value)
+                    {
+                        Width += _font.getCharacterWidth(c);                        
+                    }
+                    Height = _font.Height;
+                }
+            }
+        }
+
+        public BDFFont Font
+        {
+            get { return _font; }
+            set
+            {
+                _font = value;
+                if (!string.IsNullOrEmpty(Text))
+                {
+                    foreach (char c in Text)
+                    {
+                        Width += _font.getCharacterWidth(c);                        
+                    }
+                }
+                Height = _font.Height;
+            }
+        }
         
-        //public CanvasColor Color { get; set; }
+        public Label(string text, BDFFont font, CanvasColor color): base()
+        {
+            if (font == null) throw new ArgumentException("Font is not providet");
+            Font = font;
+            Text = text;
+            Color = color;
+        }
 
-        //public string Text
-        //{
-        //    get { return _text; }
-        //    set
-        //    {
-        //        this._text = value;
-        //        if (Font != null)
-        //        {
-        //            this.Dimensions.Width = Text.Length * Font.getCharacterWidth(0);
-        //            this.Dimensions.Height = _font.Height;
-        //        }
-        //    }
-        //}
-
-        //public BDFFont Font
-        //{
-        //    get { return _font; }
-        //    set
-        //    {
-        //        _font = value;
-        //        this.Dimensions.Width = Text.Length * Font.getCharacterWidth(0);
-        //        this.Dimensions.Height = _font.Height;
-        //    }
-        //}
-        
-
-        //public Label(string text): base()
-        //{
-        //    Font.LoadFont4x6();
-        //    this.Text = text;
-        //}
-
-        //public override void Draw()
-        //{
-        //    for (var i = 0; i < Text.Length; i++)
-        //    {
-        //        Font.DrawGlyph(ref Canvas, new CanvasPosition(Position.X + Font.getCharacterWidth(0) * i, Position.Y + Font.Height), Color, Text[i]);
-        //    }
-        //    base.Draw();
-        //}
+        public override void Update()
+        {
+            for (var i = 0; i < Text.Length; i++)
+            {
+                Font.DrawGlyph(this, X + Font.getCharacterWidth(0) * i, Y, Color, Text[i]);
+            }
+            base.Update();
+        }
     }
 }

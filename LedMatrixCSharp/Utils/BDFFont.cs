@@ -12,6 +12,7 @@ namespace LedMatrixCSharp.Utils
     public class FontCache
     {
         private static FontCache _Instance = null;
+
         public static FontCache Instance
         {
             get
@@ -24,12 +25,41 @@ namespace LedMatrixCSharp.Utils
                 return _Instance;
             }
         }
-        
-        public Dictionary<string, Dictionary<int, BDFFont.Glyph>> Fonts = new Dictionary<string, Dictionary<int, BDFFont.Glyph>>();
+
+        public Dictionary<string, BDFFont> Fonts = new Dictionary<string, BDFFont>();
     }
 
     public class BDFFont
     {
+        public static BDFFont LoadFont4x6()
+        {
+            BDFFont font = new BDFFont();
+
+            if (!FontCache.Instance.Fonts.ContainsKey(Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf")))
+            {
+                font.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf"));
+                FontCache.Instance.Fonts.Add(Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf"), font);
+                Console.WriteLine(font.glyphs.Count);
+                return font;
+            }
+
+            return FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf")];
+        }
+
+        public static BDFFont LoadFont5x7()
+        {
+            BDFFont font = new BDFFont();
+
+            if (!FontCache.Instance.Fonts.ContainsKey(Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf")))
+            {
+                var result = font.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf"));
+                FontCache.Instance.Fonts.Add(Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf"), font);
+                return font;
+            }
+
+            return FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf")];
+        }
+
         public class Glyph
         {
             public int DeviceWidth { get; set; }
@@ -43,35 +73,9 @@ namespace LedMatrixCSharp.Utils
 
         private Dictionary<int, Glyph> glyphs = new Dictionary<int, Glyph>();
 
-        public bool LoadFont4x6()
+        public BDFFont()
         {
-            if (!FontCache.Instance.Fonts.ContainsKey(Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf")))
-            {
-                var result = this.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf"));
-                FontCache.Instance.Fonts.Add(Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf"), glyphs);
-                return result;
-            }
-
-            glyphs = FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "4x6.bdf")];
-            Height = glyphs[0].Height;
-            return true;
         }
-
-        public bool LoadFont5x7()
-        {
-            if (!FontCache.Instance.Fonts.ContainsKey(Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf")))
-            {
-                var result = this.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf"));  
-                FontCache.Instance.Fonts.Add(Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf"), glyphs);
-                return result;
-            }
-
-            glyphs = FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf")];
-            Height = glyphs[0].Height;
-            return true;
-        }
-
-        public BDFFont() { }
 
         public int Height { get; set; }
 
@@ -80,13 +84,12 @@ namespace LedMatrixCSharp.Utils
         public int getCharacterWidth(int unicode)
         {
             var glyph = FindGlyph(unicode);
-            return glyph != null ? glyph.DeviceWidth : -1;
+            return glyph?.DeviceWidth ?? -1;
         }
 
         public bool LoadFont(Stream stream)
         {
             if (stream == default(Stream)) return false;
-            if (stream == null) return false;
             var streamReader = new StreamReader(stream);
             int codepoint = 0;
             int dummy;
@@ -141,6 +144,7 @@ namespace LedMatrixCSharp.Utils
                     currentGlyph = null;
                 }
             }
+
             streamReader.Close();
             stream.Close();
 
@@ -168,25 +172,27 @@ namespace LedMatrixCSharp.Utils
             var glyph = FindGlyph(unicode);
             if (glyph == null) glyph = FindGlyph(UnicodeReplacementCodepoint);
             if (glyph == null) return false;
-            for(int _y = 0; _y < glyph.Height; _y++)
+            for (int _y = 0; _y < glyph.Height; _y++)
             {
                 var bitmap = glyph.Bitmap[_y];
                 var bitString = Convert.ToString(bitmap, 2);
                 int[] bits = bitString.PadLeft(8, '0') // Add 0's from left
                     .Select(c => int.Parse(c.ToString())) // convert each char to int
                     .ToArray();
-                for(int _x = 0; _x < glyph.DeviceWidth; _x++)
+                for (int _x = 0; _x < glyph.DeviceWidth; _x++)
                 {
                     if (bits[_x] == 1)
                     {
                         canvas.SetPixel(x + _x, y + _y, color);
                     }
+
                     if (bits[_x] == 0 && background != null)
                     {
                         canvas.SetPixel(x + _x, y + _y, background);
                     }
                 }
-            } 
+            }
+
             return true;
         }
 

@@ -31,6 +31,12 @@ namespace LedMatrixCSharp.View.Layout
             CalculateDimensions();
         }
 
+        public int Count => Children.Count;
+
+        public View Get(int index) => Children[index];
+
+        public IEnumerable<View> Items => Children;
+
         public void CalculateDimensions()
         {
             Height = 0;

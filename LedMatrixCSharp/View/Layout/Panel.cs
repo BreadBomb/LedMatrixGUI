@@ -6,7 +6,7 @@ using System.Linq;
 namespace LedMatrixCSharp.View.Layout
 {
     public class Panel : View
-    {
+    {        
         protected void Concat(View view)
         {
             for ( int x = 0; x < view.Width; x++)

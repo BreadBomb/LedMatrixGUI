@@ -14,9 +14,9 @@ namespace LedMatrixCSharp.View.Layout
                 for (int y = 0; y < view.Height; y++)
                 {
                     var pixel = view.GetPixel(x, y);
-                    if (pixel != null && x + view.X <= Width && y + view.Y <= Height)
+                    if (pixel != null && x + view.OffsetX <= Width && y + view.OffsetY <= Height)
                     {
-                        SetPixel(x + view.OffsetX + view.X, y + view.OffsetY + view.Y, pixel);
+                        SetPixel(x + view.OffsetX, y + view.OffsetY, pixel);
                     }
                 }
             }

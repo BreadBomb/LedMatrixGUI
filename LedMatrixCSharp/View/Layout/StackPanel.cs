@@ -78,12 +78,14 @@ namespace LedMatrixCSharp.View.Layout
             {
                 if (Orientation == Orientation.Vertical)
                 {
-                    child.OffsetY = actualOffset;
+                    child.OffsetY = child.Y + actualOffset;
+                    child.OffsetX = child.X;
                     actualOffset += child.Height + child.Y;                    
                 }
                 else
                 {
-                    child.OffsetX = actualOffset;
+                    child.OffsetX = child.X + actualOffset;
+                    child.OffsetY = child.Y;
                     actualOffset += child.Width + child.X;         
                 }
                 

@@ -60,7 +60,7 @@ namespace LedMatrixCSharp.View.Views
         {
             for (var i = 0; i < Text.Length; i++)
             {
-                Font.DrawGlyph(this, X + Font.getCharacterWidth(0) * i, Y, Color, Text[i]);
+                Font.DrawGlyph(this, Font.getCharacterWidth(0) * i, 0, Color, Text[i]);
             }
             base.Update();
         }

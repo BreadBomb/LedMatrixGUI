@@ -56,7 +56,6 @@ namespace LedMatrixCSharp.View.Views
 
             Controls.Instance.OnScrollerScrolled(this.ScrollerName, (direction, sc) =>
             {
-                Console.WriteLine(sc.Position);
                 if (direction == 0 && CurrentIndex > 0)
                 {
                     CurrentIndex -= 1;
@@ -72,9 +71,11 @@ namespace LedMatrixCSharp.View.Views
         private View lastItem = null;
 
         public override void Update()
-        {               
+        {
+            base.Update();
+
             var currentItem = _stackPanel.Get(CurrentIndex);
-            
+
             if (lastItem == null || lastItem != currentItem)
             {
                 lastItem?.Clear();
@@ -91,9 +92,7 @@ namespace LedMatrixCSharp.View.Views
                         currentItem.SetPixel(x, y, CanvasColor.BLUE);
                     }
                 }
-            }   
-            
-            base.Update();
+            }
         }
     }
 }

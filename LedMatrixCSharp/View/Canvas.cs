@@ -120,7 +120,7 @@ namespace LedMatrixCSharp.View
             return this.pixelMap[x, y];
         }
 
-        public void Clear()
+        public virtual void Clear()
         {
             this.pixelMap = new CanvasColor[Width, Height];
         }

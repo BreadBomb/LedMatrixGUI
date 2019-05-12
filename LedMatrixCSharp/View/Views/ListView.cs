@@ -72,27 +72,18 @@ namespace LedMatrixCSharp.View.Views
 
         public override void Update()
         {
-            base.Update();
-
             var currentItem = _stackPanel.Get(CurrentIndex);
 
             if (lastItem == null || lastItem != currentItem)
             {
                 lastItem?.Clear();
+                currentItem.BackgroundColor = null;
                 lastItem = currentItem;
             }
-
-            for (int x = 0; x < currentItem.Width; x++)
-            {
-                for (int y = 0; y < currentItem.Height; y++)
-                {
-                    var pixel = currentItem.GetPixel(x, y);
-                    if (pixel == null)
-                    {
-                        currentItem.SetPixel(x, y, CanvasColor.BLUE);
-                    }
-                }
-            }
+            
+            currentItem.BackgroundColor = CanvasColor.BLUE;
+            
+            base.Update();
         }
     }
 }

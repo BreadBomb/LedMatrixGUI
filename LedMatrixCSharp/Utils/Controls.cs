@@ -51,7 +51,7 @@ namespace LedMatrixCSharp.Utils
             gruen.Value = true;
         }
 
-        public void AddButton(string name, int pin)
+        public void AddButton(string name, P1 pin)
         {
             var button = Pi.Gpio[pin];
             button.PinMode = GpioPinDriveMode.Input;
@@ -77,7 +77,7 @@ namespace LedMatrixCSharp.Utils
             //Console.WriteLine("Registered Scroller " + name);
         }
 
-        public void OnButtonClick(string name, Action<int, int, uint> action)
+        public void OnButtonClick(string name, Action action)
         {
             Buttons[name].RegisterInterruptCallback(EdgeDetection.RisingEdge, action);
         }

@@ -1,6 +1,7 @@
 using LedMatrixCSharp.Utils;
 using System;
 using System.ComponentModel;
+using System.Data;
 
 namespace LedMatrixCSharp.View.Layout
 {
@@ -28,7 +29,7 @@ namespace LedMatrixCSharp.View.Layout
         }
 
         public ScrollLayout() {}
-        
+
         public ScrollLayout(string scroller)
         {
             this.ScrollerName = scroller;
@@ -39,13 +40,14 @@ namespace LedMatrixCSharp.View.Layout
                 if (direction == 0 && yOffset > 0)
                 {
                     yOffset--;
-                } else if (direction == 1 && yOffset < Height - 32)
+                }
+                else if (direction == 1 && yOffset < Height - 32)
                 {
                     yOffset++;
                 }
             });
         }
-        
+
         public override void Update()
         {
             var containerHeight = (Height < 32 ? Height : 32);

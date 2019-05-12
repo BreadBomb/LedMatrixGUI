@@ -79,7 +79,10 @@ namespace LedMatrixCSharp.View.Views
                 {
                     var rawColor = image[x, y];
                     var color = new CanvasColor((int)rawColor.R, (int)rawColor.G, (int)rawColor.B);
-                    SetPixel(x, y, color);
+                    if (rawColor.A != 0)
+                    {                        
+                        SetPixel(x, y, color);
+                    }
                 }
             }
             base.Update();

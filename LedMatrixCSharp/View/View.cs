@@ -10,8 +10,19 @@ namespace LedMatrixCSharp.View
         public int OffsetX { get; set; }
         public int OffsetY { get; set; }
 
+        public CanvasColor BackgroundColor = null;
+        
         public View()
         {
+        }
+
+        public override void Clear()
+        {
+            base.Clear();
+            if (BackgroundColor != null)
+            {
+                Fill(BackgroundColor);
+            }
         }
 
         public virtual void Update()

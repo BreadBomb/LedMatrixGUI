@@ -31,7 +31,6 @@ namespace LedMatrixCSharp.Renderer
             RGBLedMatrixOptions ledMatrixOptions = new RGBLedMatrixOptions();
             ledMatrixOptions.Cols = 32;
             ledMatrixOptions.Rows = 32;
-            ledMatrixOptions.PwmLsbNanoseconds = 50;
                 
             if (!NoRender)
             {
@@ -41,7 +40,7 @@ namespace LedMatrixCSharp.Renderer
             }
 
             updateTimer.Elapsed += new ElapsedEventHandler(_OnUpdate);
-            updateTimer.Interval = 1000/60;
+            updateTimer.Interval = 16;
 
             _thread = new Thread(new ThreadStart(Render));
             

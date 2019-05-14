@@ -144,7 +144,7 @@
 
   <ItemGroup>
     <Reference Include="RGBLedMatrix">
-      <HintPath>RGBLedMatrix.dll</HintPath>
+      <HintPath>..\..\..\..\RiderProjects\LedMatrixOS\LedMatrixOS\RGBLedMatrix.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -31,6 +31,7 @@ namespace LedMatrixCSharp.Renderer
             RGBLedMatrixOptions ledMatrixOptions = new RGBLedMatrixOptions();
             ledMatrixOptions.Cols = 32;
             ledMatrixOptions.Rows = 32;
+            ledMatrixOptions.GpioSlowdown = 2;
                 
             if (!NoRender)
             {

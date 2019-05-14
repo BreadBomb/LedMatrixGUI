@@ -8,6 +8,7 @@ namespace LedMatrixCSharp
     public class MatrixApplication
     {
         public View.View Child;
+
         public bool NoRender = false;
         private Renderer.Renderer renderer;
         

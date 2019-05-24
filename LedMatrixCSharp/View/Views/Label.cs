@@ -10,7 +10,7 @@ namespace LedMatrixCSharp.View.Views
 {
     public class Label : View
     {
-        private string _text;
+        private string _text = "";
         private BDFFont _font = new BDFFont();
         public CanvasColor Color { get; set; }
 
@@ -19,15 +19,12 @@ namespace LedMatrixCSharp.View.Views
             get { return _text; }
             set
             {
-                this._text = value;
-                if (Font != null)
+                if (Font != null && value != _text)
                 {
-                    foreach (char c in value)
-                    {
-                        Width += _font.getCharacterWidth(c);                        
-                    }
+                        Width = _font.getCharacterWidth(value[0]) * value.Length;                        
                     Height = _font.Height;
                 }
+                this._text = value;
             }
         }
 
@@ -58,6 +55,7 @@ namespace LedMatrixCSharp.View.Views
 
         public override void Update()
         {
+            Clear();
             for (var i = 0; i < Text.Length; i++)
             {
                 Font.DrawGlyph(this, Font.getCharacterWidth(0) * i, 0, Color, Text[i]);

@@ -47,7 +47,7 @@ namespace LedMatrixCSharp.View
             set
             {
                 _Width = value;
-                pixelMap = new CanvasColor[Width, Height];
+                pixelMap = ResizeArray(pixelMap, Width, Height);
             }
         }
         public int Height
@@ -59,7 +59,7 @@ namespace LedMatrixCSharp.View
             set
             {
                 _Height = value;
-                pixelMap = new CanvasColor[Width, Height];
+                pixelMap = ResizeArray(pixelMap, Width, Height);
             }
         }
 
@@ -123,6 +123,17 @@ namespace LedMatrixCSharp.View
         public virtual void Clear()
         {
             this.pixelMap = new CanvasColor[Width, Height];
+        }
+
+        private T[,] ResizeArray<T>(T[,] original, int rows, int cols)
+        {
+            var newArray = new T[rows, cols];
+            int minRows = Math.Min(rows, original.GetLength(0));
+            int minCols = Math.Min(cols, original.GetLength(1));
+            for (int i = 0; i < minRows; i++)
+                for (int j = 0; j < minCols; j++)
+                    newArray[i, j] = original[i, j];
+            return newArray;
         }
     }
 }

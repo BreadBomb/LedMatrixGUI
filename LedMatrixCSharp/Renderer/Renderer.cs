@@ -35,7 +35,7 @@ namespace LedMatrixCSharp.Renderer
                 
             if (!NoRender)
             {
-                matrix = new RGBLedMatrix(ledMatrixOptions);                
+                matrix = new RGBLedMatrix(ledMatrixOptions);
                 canvas = matrix.CreateOffscreenCanvas();
                 Console.WriteLine("Matrix and Canvas initalized");
             }

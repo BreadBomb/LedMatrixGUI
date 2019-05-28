@@ -21,10 +21,10 @@ namespace LedMatrixCSharp.View.Views
             {
                 if (Font != null && value != _text)
                 {
-                        Width = _font.getCharacterWidth(value[0]) * value.Length;                        
+                    Width = _font.getCharacterWidth(value[0]) * value.Length;                        
                     Height = _font.Height;
+                    this._text = value;
                 }
-                this._text = value;
             }
         }
 
@@ -60,7 +60,6 @@ namespace LedMatrixCSharp.View.Views
             {
                 Font.DrawGlyph(this, Font.getCharacterWidth(0) * i, 0, Color, Text[i]);
             }
-            base.Update();
         }
     }
 }

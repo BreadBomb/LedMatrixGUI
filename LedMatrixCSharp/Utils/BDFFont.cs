@@ -59,6 +59,20 @@ namespace LedMatrixCSharp.Utils
 
             return FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf")];
         }
+        
+        public static BDFFont LoadFont9x15()
+        {
+            BDFFont font = new BDFFont();
+
+            if (!FontCache.Instance.Fonts.ContainsKey(Path.Combine(Environment.CurrentDirectory, "Fonts", "9x15.bdf")))
+            {
+                var result = font.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "9x15.bdf"));
+                FontCache.Instance.Fonts.Add(Path.Combine(Environment.CurrentDirectory, "Fonts", "9x15.bdf"), font);
+                return font;
+            }
+
+            return FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "9x15.bdf")];
+        }
 
         public class Glyph
         {

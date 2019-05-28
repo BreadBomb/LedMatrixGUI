@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Timers;
-using Unosquare.Swan;
 
 namespace LedMatrixCSharp.Renderer
 {

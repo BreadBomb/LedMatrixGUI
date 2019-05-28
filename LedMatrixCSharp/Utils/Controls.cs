@@ -1,26 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
-using System.Runtime.Serialization;
-using Unosquare.PiGpio.NativeMethods;
-using Unosquare.PiGpio.NativeEnums;
-using Unosquare.PiGpio.NativeTypes;
+using System.Net.Sockets;
+using LedMatrixCSharp.View.Layout;
+using RaspberrySharp.IO.GeneralPurpose;
 
 namespace LedMatrixCSharp.Utils
 {
     public class Scroller
     {
         public int Position { get; set; }
-        public SystemGpio UpPin { get; set; }
-        public SystemGpio DownPin { get; set; }
-        public UserGpio LastPin { get; set; }
+        public ProcessorPin UpPin { get; set; }
+        public ProcessorPin DownPin { get; set; }
+        public ProcessorPin LastPin { get; set; }
     }
 
     public class Controls
     {
         private static Controls controls;
         
-        private static Dictionary<string, SystemGpio> Buttons = new Dictionary<string, SystemGpio>();
+        private static Dictionary<string, GpioConnection> Buttons = new Dictionary<string, GpioConnection>();
         private static Dictionary<string, Scroller> Scrollers = new Dictionary<string, Scroller>();
 
         public static Controls Instance
@@ -37,32 +36,27 @@ namespace LedMatrixCSharp.Utils
 
         public Controls()
         {
-            Setup.GpioInitialise();
+            var rot = ProcessorPin.Gpio38.Output();
+            var gruen = ProcessorPin.Gpio31.Output();
+            var blau = ProcessorPin.Gpio33.Output();
 
-            var rot = SystemGpio.Bcm20;
-            var gruen = SystemGpio.Bcm13;
-            var blau = SystemGpio.Bcm06;
-            IO.GpioSetMode(rot, PinMode.Output);
-            IO.GpioSetMode(gruen, PinMode.Output);
-            IO.GpioSetMode(blau, PinMode.Output);
-
-            IO.GpioWrite(rot, true);
-            IO.GpioWrite(gruen, false);
-            IO.GpioWrite(blau, true);
+            gruen.Enable();
+            blau.Disable();
+            rot.Enable();
         }
 
-        public void AddButton(string name, SystemGpio pin)
+        public void AddButton(string name, ProcessorPin pin)
         {
-            IO.GpioSetMode(pin, PinMode.Input);
-            IO.GpioSetPullUpDown(pin, GpioPullMode.Down);
-            Buttons.Add(name, pin);
+            var p = pin.Input();
+            p.Resistor = PinResistor.PullDown;
+            
+            var gpioConnection = new GpioConnection(p);
+            
+            Buttons.Add(name, gpioConnection);
         }
         
-        public void AddScroller(string name, SystemGpio up, SystemGpio down)
-        {
-            IO.GpioSetMode(up, PinMode.Input);
-            IO.GpioSetMode(down, PinMode.Input);
-
+        public void AddScroller(string name, ProcessorPin up, ProcessorPin down)
+        {            
             var scroller = new Scroller()
             {
                 UpPin = up,
@@ -74,17 +68,19 @@ namespace LedMatrixCSharp.Utils
             //Console.WriteLine("Registered Scroller " + name);
         }
 
-        public void OnButtonClick(string name, PiGpioAlertDelegate action)
+        public void OnButtonClick(string name, EventHandler<PinStatusEventArgs> eventHandler)
         {
-            var userGpio = (UserGpio)Buttons[name];
+            var gpio = Buttons[name];
+            
+            gpio.Open();
+            gpio.PinStatusChanged += eventHandler;          
+        }
 
-            IO.GpioSetWatchdog(userGpio, 10);
-            IO.GpioSetAlertFunc(userGpio, (gpio, level, time) => {
-                if (level == LevelChange.LowToHigh)
-                {
-                    action.Invoke(gpio, level, time);
-                }
-            });
+        public void ButtonUnsubscribe(string name, EventHandler<PinStatusEventArgs> eventHandler)
+        {
+            var gpio = Buttons[name];
+
+            gpio.PinStatusChanged -= eventHandler;
         }
 
         public void OnScrollerScrolled(string name, Action<int, Scroller> action)
@@ -92,50 +88,30 @@ namespace LedMatrixCSharp.Utils
             if (!Scrollers.ContainsKey(name)) return;
             var scroller = Scrollers[name];
 
-            var userGpioUp = (UserGpio)scroller.UpPin;
-            var userGpioDown = (UserGpio)scroller.DownPin;
+            var gpioUp = scroller.UpPin.Input();
+            var gpioDown = scroller.DownPin.Input();
 
-            IO.GpioSetWatchdog(userGpioUp, 10);
-            IO.GpioSetWatchdog(userGpioDown, 10);
-
-            Action<UserGpio ,bool> pinChanged = (gpio, status) =>
+            Action<ProcessorPin ,bool> pinChanged = (gpio, status) =>
             {
                 if (gpio != scroller.LastPin)
                 {
                     scroller.LastPin = gpio;
 
-                    if (gpio == userGpioUp && !status)
+                    if (gpio == gpioUp.Pin && !status)
                     {
-                        if (!IO.GpioRead(scroller.DownPin))
-                        {
                             scroller.Position++;
                             action.Invoke(0, scroller);
-                        }
                     }
-                    else if (gpio == userGpioDown && status)
+                    else if (gpio == gpioDown.Pin && status)
                     {
-                        if (IO.GpioRead(scroller.UpPin))
-                        {
                             scroller.Position--;
                             action.Invoke(1, scroller);
-                        }
                     }
                 }
             };
-
-            IO.GpioSetAlertFunc(userGpioUp, (gpio, level, time) => {
-                if (level == LevelChange.LowToHigh)
-                {
-                    pinChanged.Invoke(gpio, IO.GpioRead((SystemGpio)gpio));
-                }
-            });
-            IO.GpioSetAlertFunc(userGpioDown, (gpio, level, time) =>
-            {
-                if (level == LevelChange.LowToHigh)
-                {
-                    pinChanged.Invoke(gpio, IO.GpioRead((SystemGpio)gpio));
-                }
-            });
+            
+            gpioUp.StatusChangedAction = (b) => pinChanged.Invoke(gpioUp.Pin, b);
+            gpioDown.StatusChangedAction = (b) => pinChanged.Invoke(gpioDown.Pin, b);
         }
     }
 }

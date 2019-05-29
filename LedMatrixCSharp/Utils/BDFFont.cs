@@ -60,6 +60,34 @@ namespace LedMatrixCSharp.Utils
             return FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "5x7.bdf")];
         }
         
+        public static BDFFont LoadFont8x13()
+        {
+            BDFFont font = new BDFFont();
+
+            if (!FontCache.Instance.Fonts.ContainsKey(Path.Combine(Environment.CurrentDirectory, "Fonts", "8x13.bdf")))
+            {
+                var result = font.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "8x13.bdf"));
+                FontCache.Instance.Fonts.Add(Path.Combine(Environment.CurrentDirectory, "Fonts", "8x13.bdf"), font);
+                return font;
+            }
+
+            return FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "8x13.bdf")];
+        }
+
+        public static BDFFont LoadFont8x13B()
+        {
+            BDFFont font = new BDFFont();
+
+            if (!FontCache.Instance.Fonts.ContainsKey(Path.Combine(Environment.CurrentDirectory, "Fonts", "8x13B.bdf")))
+            {
+                var result = font.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "8x13B.bdf"));
+                FontCache.Instance.Fonts.Add(Path.Combine(Environment.CurrentDirectory, "Fonts", "8x13B.bdf"), font);
+                return font;
+            }
+
+            return FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "8x13B.bdf")];
+        }
+
         public static BDFFont LoadFont9x15()
         {
             BDFFont font = new BDFFont();
@@ -72,6 +100,20 @@ namespace LedMatrixCSharp.Utils
             }
 
             return FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "9x15.bdf")];
+        }
+
+        public static BDFFont LoadFont9x15B()
+        {
+            BDFFont font = new BDFFont();
+
+            if (!FontCache.Instance.Fonts.ContainsKey(Path.Combine(Environment.CurrentDirectory, "Fonts", "9x15B.bdf")))
+            {
+                var result = font.LoadFont(Path.Combine(Environment.CurrentDirectory, "Fonts", "9x15B.bdf"));
+                FontCache.Instance.Fonts.Add(Path.Combine(Environment.CurrentDirectory, "Fonts", "9x15B.bdf"), font);
+                return font;
+            }
+
+            return FontCache.Instance.Fonts[Path.Combine(Environment.CurrentDirectory, "Fonts", "9x15B.bdf")];
         }
 
         public class Glyph
